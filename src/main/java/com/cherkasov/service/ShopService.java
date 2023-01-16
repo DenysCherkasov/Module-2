@@ -14,7 +14,7 @@ import java.util.stream.DoubleStream;
 public class ShopService {
     private final InvoiceListRepository invoiceListRepository;
 
-    PersonService personService = PersonService.getInstance();
+    PersonService PERSON_SERVICE = PersonService.getInstance();
     private final Random random = new Random();
 
     private static ShopService instance;
@@ -44,7 +44,7 @@ public class ShopService {
     }
 
     public Invoice createRandomInvoice() {
-        Invoice invoice = new Invoice(personService.createRundomCustomer(), createRandomListGoods());
+        Invoice invoice = new Invoice(PERSON_SERVICE.createRundomCustomer(), createRandomListGoods());
         invoiceListRepository.save(invoice);
         return invoice;
     }
@@ -77,7 +77,7 @@ public class ShopService {
         if (fileWay == null || !fileWay.endsWith(".csv")) {
             return Optional.empty();
         } else {
-            Invoice invoice = new Invoice(personService.createRundomCustomer(), createListGoods(fileWay));
+            Invoice invoice = new Invoice(PERSON_SERVICE.createRundomCustomer(), createListGoods(fileWay));
             invoiceListRepository.save(invoice);
             printInvoiceInfo(invoice);
             return Optional.of(invoice);

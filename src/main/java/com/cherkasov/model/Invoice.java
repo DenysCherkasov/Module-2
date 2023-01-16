@@ -18,6 +18,11 @@ public class Invoice {
     private String type;
     private List<Device> goods;
 
+    public Invoice() {
+        id = UUID.randomUUID().toString();
+    }
+
+
     public Invoice(final Customer customer, final List<Device> goods) {
         this.customer = customer;
         this.goods = goods;
@@ -54,7 +59,7 @@ public class Invoice {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         goods.forEach(device -> sb.append(device.toString()).append("%n"));
-        return String.format("Invoice (Type: %s, Customer: %s)%n, %s",
-                type, customer, sb);
+        return String.format("Invoice (ID: %s, Type: %s, Customer: %s)%n, %s",
+                id, type, customer, sb);
     }
 }

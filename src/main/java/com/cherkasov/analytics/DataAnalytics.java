@@ -8,15 +8,15 @@ import com.cherkasov.service.ShopService;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.DoubleStream;
 
 public class DataAnalytics {
     InvoiceListRepository invoiceListRepository;
+    ShopService SHOP_SERVICE = ShopService.getInstance();
     private static DataAnalytics instance;
 
     public DataAnalytics() {
-        this.invoiceListRepository = InvoiceListRepository.getInstance();
+        invoiceListRepository = InvoiceListRepository.getInstance();
     }
 
     public static DataAnalytics getInstance() {
@@ -26,8 +26,14 @@ public class DataAnalytics {
         return instance;
     }
 
+    private void checkCountInvoices() {
+        if (invoiceListRepository.getAll().length < 15) {
+            SHOP_SERVICE.createFifteenRandomInvoice();
+        }
+    }
 
     public int countDevices(DeviceType deviceType) {
+        checkCountInvoices();
         int count = (int) Arrays.stream(invoiceListRepository.getAll())
                 .flatMap(invoice -> invoice.getGoods().stream())
                 .filter(device -> device.getDeviceType() == deviceType)
@@ -36,8 +42,9 @@ public class DataAnalytics {
         return count;
     }
 
-    public Optional<Double> minimalInvoiceSum() {
-        Optional<Double> minimalInvoiceSum = (Arrays.stream(invoiceListRepository.getAll())
+    public Double minimalInvoiceSum() {
+        checkCountInvoices();
+        return (Arrays.stream(invoiceListRepository.getAll())
                 .min(comparator)
                 .map(invoice -> {
                     double sum = invoice.getGoods().stream()
@@ -45,8 +52,8 @@ public class DataAnalytics {
                             .sum();
                     System.out.println(invoice.getCustomer() + "Minimal Invoice sum: " + sum);
                     return sum;
-                }));
-        return minimalInvoiceSum;
+                })
+                .get());
     }
 
     final Comparator<Invoice> comparator = (o1, o2) -> {
@@ -60,6 +67,7 @@ public class DataAnalytics {
     };
 
     public double countSumAllInvoices() {
+        checkCountInvoices();
         double count = Arrays.stream(invoiceListRepository.getAll())
                 .flatMapToDouble(invoice -> DoubleStream.of(invoice.getGoods().stream()
                         .flatMapToDouble(device -> DoubleStream.of(device.getPrice()))
@@ -70,6 +78,7 @@ public class DataAnalytics {
     }
 
     public int countRetailInvoices() {
+        checkCountInvoices();
         int count = (int) Arrays.stream(invoiceListRepository.getAll())
                 .filter(invoice -> invoice.getType().equals("Retail"))
                 .count();
@@ -78,6 +87,7 @@ public class DataAnalytics {
     }
 
     public List<Invoice> findInvoicesWithOneDevice() {
+        checkCountInvoices();
         return Arrays.stream(invoiceListRepository.getAll())
                 .filter(invoice -> invoice.getGoods().size() == 1)
                 .peek(invoice -> System.out.println("Invoices with one device: " + invoice))
@@ -85,6 +95,7 @@ public class DataAnalytics {
     }
 
     public List<Invoice> findFirstThreeInvoices() {
+        checkCountInvoices();
         return Arrays.stream(invoiceListRepository.getAll())
                 .limit(3)
                 .peek(invoice -> System.out.println("First 3 invoices: " + invoice))
@@ -92,6 +103,7 @@ public class DataAnalytics {
     }
 
     public List<Invoice> findInvoicesCustomerUnderEighteen() {
+        checkCountInvoices();
         return Arrays.stream(invoiceListRepository.getAll())
                 .filter(invoice -> invoice.getCustomer().getAge() < 18)
                 .peek(invoice -> {

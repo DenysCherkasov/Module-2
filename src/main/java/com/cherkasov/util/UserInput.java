@@ -31,21 +31,6 @@ public class UserInput {
         return userChoice;
     }
 
-
-    public static int getInt(final String option) {
-        String line;
-        do {
-            try {
-                System.out.println(option);
-                line = READER.readLine();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } while (!StringUtils.isNumeric(line));
-
-        return Integer.parseInt(line);
-    }
-
     public static String inputId() {
         String userId;
         do {

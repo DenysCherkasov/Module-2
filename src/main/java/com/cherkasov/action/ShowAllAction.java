@@ -8,7 +8,6 @@ public class ShowAllAction implements Action {
     @Override
     public void execute() {
         Invoice[] all = SHOP_SERVICE.getAll();
-        Arrays.stream(all).forEach(invoice ->
-                System.out.println(invoice));
+        Arrays.stream(all).forEach(System.out::println);
     }
 }

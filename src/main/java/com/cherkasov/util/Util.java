@@ -1,7 +1,7 @@
 package com.cherkasov.util;
 
+import com.cherkasov.action.Actions;
 import com.cherkasov.model.Invoice;
-import com.cherkasov.repository.CustomerListRepository;
 import com.cherkasov.repository.InvoiceListRepository;
 
 import java.util.Arrays;
@@ -24,6 +24,14 @@ public class Util {
             sb.append(str.charAt(number));
         }
         return sb.toString();
+    }
+
+    public static String[] mapActionToName(final Actions[] values) {
+        String[] names = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            names[i] = values[i].getName();
+        }
+        return names;
     }
 
     final Comparator<Invoice> ageCustomerComparator = (o1, o2) ->
