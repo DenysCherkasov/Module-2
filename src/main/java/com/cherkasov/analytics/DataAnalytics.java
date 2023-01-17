@@ -69,9 +69,8 @@ public class DataAnalytics {
     public double countSumAllInvoices() {
         checkCountInvoices();
         double count = Arrays.stream(invoiceListRepository.getAll())
-                .flatMapToDouble(invoice -> DoubleStream.of(invoice.getGoods().stream()
-                        .flatMapToDouble(device -> DoubleStream.of(device.getPrice()))
-                        .sum()))
+                .flatMap(invoice -> invoice.getGoods().stream())
+                .mapToDouble(Device::getPrice)
                 .sum();
         System.out.println("Total sum of all invoices: " + count);
         return count;
